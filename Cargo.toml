@@ -1,5 +1,5 @@
 [package]
-name = "open-repo"
+name = "open_repo"
 version = "0.1.0"
 edition = "2021"
 

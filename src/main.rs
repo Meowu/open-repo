@@ -1,3 +1,6 @@
+// use std::process::{exit, Command};
+use open_repo::check_git;
+
 fn main() {
-    println!("Hello, world!");
+    check_git();
 }
