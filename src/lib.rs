@@ -26,3 +26,12 @@ pub fn get_remote_url() -> String {
         }
     }
 }
+
+pub fn generate_url(remot_url: &str) -> String {
+    let url = remot_url.replace(".git", "");
+    if url.starts_with("https") {
+        url
+    } else {
+        url.replace(":", "/").replace("git@", "https://")
+    }
+}
