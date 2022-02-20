@@ -35,3 +35,17 @@ pub fn generate_url(remot_url: &str) -> String {
         url.replace(":", "/").replace("git@", "https://")
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_generate_correct_url() {
+        let url = "git@github.com:Meowu/open-repo.git";
+        let url1 = "https://github.com/Meowu/open-repo.git";
+        let result = String::from("https://github.com/Meowu/open-repo");
+        assert_eq!(generate_url(url), result);
+        assert_eq!(generate_url(url1), result);
+    }
+}
