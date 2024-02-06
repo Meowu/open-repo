@@ -14,14 +14,23 @@ pub fn check_git() {
 pub fn get_remote_url() -> String {
     let result = Command::new("git")
         .args(["remote", "get-url", "origin"])
+        .stdout(std::process::Stdio::piped()) // Redirect stderr to stdout
+        .stderr(std::process::Stdio::piped())
         .output();
     match result {
         Ok(output) => {
-            let stdout = String::from_utf8_lossy(&output.stdout);
-            stdout.trim().to_string()
+            if output.status.success() {
+                let stdout = String::from_utf8_lossy(&output.stdout);
+                stdout.trim().to_string()
+            } else {
+                // Custom error message without printing detailed error from git command
+                println!("Error: Not in a git repository or failed to get remote URL.");
+                exit(output.status.code().unwrap_or(1));
+            }
         },
-        Err(_) => {
-            println!("not in a repository.");
+        Err(e) => {
+            // Handle errors when executing git command
+            eprintln!("Failed to run git command: {}", e);
             exit(1);
         }
     }
