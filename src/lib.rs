@@ -1,14 +1,42 @@
-use std::process::{Command, exit};
+use std::process::{exit, Command};
 
 pub fn check_git() {
     let command = "git";
-    let result = Command::new(command)
-        .arg("--version")
-        .output();
+    let result = Command::new(command).arg("--version").output();
     if let Err(_) = result {
         println!("{} not found.", command);
         exit(1);
     }
+}
+
+fn get_arg_value(args: &[String], flag: &str) -> Option<String> {
+    args.iter()
+        .position(|arg| arg == flag)
+        .and_then(|index| args.get(index + 1).cloned())
+}
+
+pub fn generate_sub_path(args: &[String]) -> Result<String, &'static str> {
+    let open_issue = args.iter().any(|arg| arg == "--issue");
+    let open_pull = args.contains(&String::from("--pull"));
+
+    if open_issue && open_pull {
+        return Err("Cannot use both --issue and --pull at the same time");
+    }
+    if open_issue {
+        if let Some(issue) = get_arg_value(&args, "--issue") {
+            return Ok(format!("/issues/{}", issue));
+        } else {
+            return Err("No issue specified");
+        }
+    }
+    if open_pull {
+        if let Some(pull) = get_arg_value(&args, "--pull") {
+            return Ok(format!("/pull/{}", pull));
+        } else {
+            return Err("No pull request specified");
+        }
+    }
+    Ok(String::new())
 }
 
 pub fn get_remote_url() -> String {
@@ -27,7 +55,7 @@ pub fn get_remote_url() -> String {
                 println!("Error: Not in a git repository or failed to get remote URL.");
                 exit(output.status.code().unwrap_or(1));
             }
-        },
+        }
         Err(e) => {
             // Handle errors when executing git command
             eprintln!("Failed to run git command: {}", e);
