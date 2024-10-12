@@ -26,14 +26,14 @@ pub fn generate_sub_path(args: &[String]) -> Result<String, &'static str> {
         if let Some(issue) = get_arg_value(&args, "--issue") {
             return Ok(format!("/issues/{}", issue));
         } else {
-            return Err("No issue specified");
+            return Ok("/issues".to_string());
         }
     }
     if open_pull {
         if let Some(pull) = get_arg_value(&args, "--pull") {
             return Ok(format!("/pull/{}", pull));
         } else {
-            return Err("No pull request specified");
+            return Ok("/pulls".to_string());
         }
     }
     Ok(String::new())
