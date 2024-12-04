@@ -1,3 +1,4 @@
+use open;
 use std::process::{exit, Command};
 
 pub fn check_git() {
@@ -13,6 +14,18 @@ fn get_arg_value(args: &[String], flag: &str) -> Option<String> {
     args.iter()
         .position(|arg| arg == flag)
         .and_then(|index| args.get(index + 1).cloned())
+}
+
+pub fn open_profile(args: &[String]) -> Result<(), &'static str> {
+    if let Some(name) = get_arg_value(&args, "-p") {
+        let profile_url = format!("https://github.com/{}", name);
+        match open::that(profile_url) {
+            Err(_) => Err("Failed to open profile."),
+            _ => Ok(()),
+        }
+    } else {
+        Err("Not profile.")
+    }
 }
 
 pub fn generate_sub_path(args: &[String]) -> Result<String, &'static str> {
