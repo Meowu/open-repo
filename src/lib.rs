@@ -17,7 +17,7 @@ fn get_arg_value(args: &[String], flag: &str) -> Option<String> {
 }
 
 pub fn open_profile(args: &[String]) -> Result<(), &'static str> {
-    if let Some(name) = get_arg_value(&args, "-p") {
+    if let Some(name) = get_arg_value(&args, "-p").or_else(|| get_arg_value(&args, "--profile")) {
         let profile_url = format!("https://github.com/{}", name);
         match open::that(profile_url) {
             Err(_) => Err("Failed to open profile."),
