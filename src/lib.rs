@@ -77,12 +77,17 @@ pub fn get_remote_url() -> String {
     }
 }
 
-pub fn generate_url(remot_url: &str) -> String {
-    let url = remot_url.replace(".git", "");
-    if url.starts_with("https") {
-        url
+pub fn generate_url(remote_url: &str) -> String {
+    let url = remote_url.trim_end_matches(".git");
+    
+    if url.starts_with("https://") || url.starts_with("http://") {
+        url.to_string()
+    } else if url.starts_with("git@") {
+        // 处理 SSH 格式: git@github.com:user/repo
+        url.replacen(":", "/", 1)
+           .replace("git@", "https://")
     } else {
-        url.replace(":", "/").replace("git@", "https://")
+        url.to_string()
     }
 }
 
