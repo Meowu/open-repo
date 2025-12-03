@@ -96,11 +96,34 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_generate_correct_url() {
-        let url = "git@github.com:Meowu/open-repo.git";
-        let url1 = "https://github.com/Meowu/open-repo.git";
-        let result = String::from("https://github.com/Meowu/open-repo");
-        assert_eq!(generate_url(url), result);
-        assert_eq!(generate_url(url1), result);
+    fn test_generate_url_ssh() {
+        assert_eq!(
+            generate_url("git@github.com:user/repo.git"),
+            "https://github.com/user/repo"
+        );
+    }
+
+    #[test]
+    fn test_generate_url_https() {
+        assert_eq!(
+            generate_url("https://github.com/user/repo.git"),
+            "https://github.com/user/repo"
+        );
+    }
+
+    #[test]
+    fn test_generate_sub_path_issue() {
+        let args = vec!["open_repo".into(), "--issue".into(), "123".into()];
+        assert_eq!(generate_sub_path(&args).unwrap(), "/issues/123");
+    }
+
+    #[test]
+    fn test_generate_sub_path_conflict() {
+        let args = vec![
+            "open_repo".into(),
+            "--issue".into(),
+            "--pull".into(),
+        ];
+        assert!(generate_sub_path(&args).is_err());
     }
 }
